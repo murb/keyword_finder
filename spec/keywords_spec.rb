@@ -71,4 +71,24 @@ describe KeywordFinder::Keywords do
     end
   end
 
+  describe "#complex_test" do
+    it "should work for these examples" do
+      a = KeywordFinder::Keywords.new(["aardappelen", "zachtkokende aardappelen", "zout",
+        "schimmelkaas", "kaas", "oude harde kaas", "kikkererwten", "maïs",
+        "bruine bonen", "shiitake", "boter"])
+
+      examples = {"een grote pan zachtkokende aardappelen met een snufje zout"=>["zachtkokende aardappelen", "zout"],
+        "schimmelkaas" => ["schimmelkaas"],
+        "(schimmel)kaas" => ["schimmelkaas"],
+        "old amsterdam (maar een andere oude harde kaas kan natuurlijk ook)" => ["oude harde kaas"],
+        "g (verse) shiitake in bitesize stukjes gesneden" => ["shiitake"],
+        "pot hak bonenmix (kikkererwten maïs kidney en bruine bonen) afgespoeld en uitgelekt" => ["kikkerwerwten", "maïs", "bruine bonen"],
+        "g boter gesmolten en licht afgekoeld" => ["boter"]}
+
+      examples.each do |sentence, expected|
+        expect(a.find_in(sentence).to eq(expected))
+      end
+    end
+  end
+
 end
