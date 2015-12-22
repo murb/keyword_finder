@@ -11,6 +11,16 @@ describe KeywordFinder::Keywords do
     expect(a.last).to eq("d");
     expect(a.class).to eq(KeywordFinder::Keywords);
   end
+  describe "#combine_more_specifics" do
+    it "should combine (a)b to ab" do
+      a = KeywordFinder::Keywords.new()
+      expect(a.combine_more_specifics("a(b)")).to eq("ab")
+    end
+    it "should combine anothe (a)b and b(a) to ..." do
+      a = KeywordFinder::Keywords.new()
+      expect(a.combine_more_specifics("anothe (a)b and b(a) to")).to eq("anothe ab and ba to")
+    end
+  end
   describe "#to_regex" do
     it "should return an empty regex if no keywords are present" do
       a = KeywordFinder::Keywords.new()
@@ -19,7 +29,10 @@ describe KeywordFinder::Keywords do
     it "should return a filled regex when keywords are present" do
       a = KeywordFinder::Keywords.new(["a","b"])
       expect(a.to_regex).to eq(/(\sa\s|\sb\s)/)
-
+    end
+    it "should work with utf-8 characters" do
+      a = KeywordFinder::Keywords.new(["ï","æ"])
+      expect(a.to_regex).to eq(/(\sï\s|\sæ\s)/)
     end
   end
   describe "#find_in" do
@@ -75,18 +88,18 @@ describe KeywordFinder::Keywords do
     it "should work for these examples" do
       a = KeywordFinder::Keywords.new(["aardappelen", "zachtkokende aardappelen", "zout",
         "schimmelkaas", "kaas", "oude harde kaas", "kikkererwten", "maïs",
-        "bruine bonen", "shiitake", "boter"])
+        "bruine bonen", "shiitake", "boter", "kidney bonen"])
 
       examples = {"een grote pan zachtkokende aardappelen met een snufje zout"=>["zachtkokende aardappelen", "zout"],
         "schimmelkaas" => ["schimmelkaas"],
         "(schimmel)kaas" => ["schimmelkaas"],
         "old amsterdam (maar een andere oude harde kaas kan natuurlijk ook)" => ["oude harde kaas"],
         "g (verse) shiitake in bitesize stukjes gesneden" => ["shiitake"],
-        "pot hak bonenmix (kikkererwten maïs kidney en bruine bonen) afgespoeld en uitgelekt" => ["kikkerwerwten", "maïs", "bruine bonen"],
+        "pot hak bonenmix (kikkererwten, maïs, kidney en bruine bonen) afgespoeld en uitgelekt" => ["kikkererwten", "maïs", "bruine bonen"],
         "g boter gesmolten en licht afgekoeld" => ["boter"]}
 
       examples.each do |sentence, expected|
-        expect(a.find_in(sentence).to eq(expected))
+        expect( a.find_in(sentence) ).to eq(expected)
       end
     end
   end

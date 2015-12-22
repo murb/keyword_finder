@@ -9,7 +9,11 @@ module KeywordFinder
     end
 
     def clean_sentence sentence
-      sentence.gsub(/(\.|\?)/," $1 ")
+      sentence.gsub(/(\.|\?|\,|\;)/," $1 ")
+    end
+
+    def combine_more_specifics sentence
+      sentence.gsub(/([A-Za-z]*\([A-Za-z]*\)[A-Za-z]*)/) { |s| s.gsub(/(\(|\))/,'') }
     end
 
     def scan_part sentence
@@ -28,6 +32,7 @@ module KeywordFinder
         subsentences_strategy: :none # :none, :ignore_if_found_in_main, :always_ignore
       }.merge(options)
 
+      sentence = self.combine_more_specifics(sentence)
       main_and_subs = self.separate_main_and_sub_sentences(sentence)
       main_results = self.scan_part(main_and_subs[:main])
       sub_results = []
@@ -43,7 +48,7 @@ module KeywordFinder
     def separate_main_and_sub_sentences sentence
       subs = sentence.scan(/(\(.*\))/).flatten
       subs.each do |subsentence|
-        sentence.gsub!(subsentence,"")
+        sentence = sentence.gsub(subsentence,"")
       end
       {main:sentence,subs:subs.collect{|a| a[1..(a.length-2)]}}
     end
