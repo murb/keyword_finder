@@ -1,5 +1,7 @@
 # KeywordFinder
 
+[![Build Status](https://travis-ci.org/murb/keyword_finder.svg)](https://travis-ci.org/murb/keyword_finder)
+
 We were dealing with the following situation:
 
 Given a set of the following keywords: "aardappelen", "zachtkokende aardappelen", "zout", "schimmelkaas", "kaas", "oude harde kaas", "kikkererwten", "maïs", "bruine bonen", "shiitake", "boter"
