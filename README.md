@@ -1,8 +1,20 @@
 # KeywordFinder
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/keyword_finder`. To experiment with that code, run `bin/console` for an interactive prompt.
+We were dealing with the following situation:
 
-TODO: Delete this and the text above, and describe your gem
+Given a set of the following keywords: "aardappelen", "zachtkokende aardappelen", "zout", "schimmelkaas", "kaas", "oude harde kaas", "kikkererwten", "maïs", "bruine bonen", "shiitake", "boter"
+
+Can you recognize:
+
+    "een grote pan zachtkokende aardappelen met een snufje zout"=>["zachtkokende aardappelen", "zout"],
+    "schimmelkaas" => ["schimmelkaas"],
+    "(schimmel)kaas" => ["schimmelkaas"],
+    "old amsterdam (maar een andere oude harde kaas kan natuurlijk ook)" => ["oude harde kaas"],
+    "g (verse) shiitake in bitesize stukjes gesneden" => ["shiitake"],
+    "pot hak bonenmix (kikkererwten maïs kidney en bruine bonen) afgespoeld en uitgelekt" => ["kikkerwerwten", "maïs", "bruine bonen"],
+    "g boter gesmolten en licht afgekoeld" => ["boter"]
+
+Well, this gem helps you do this. It isn't rocket science, but if you need the functionality, go ahead (and submit improvements)
 
 ## Installation
 
@@ -22,7 +34,23 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Since above I wrote a small 'spec', here is the formal rspec:
+
+    a = KeywordFinder::Keywords.new(["aardappelen", "zachtkokende aardappelen", "zout",
+      "schimmelkaas", "kaas", "oude harde kaas", "kikkererwten", "maïs",
+      "bruine bonen", "shiitake", "boter", "kidney bonen"])
+
+    examples = {"een grote pan zachtkokende aardappelen met een snufje zout"=>["zachtkokende aardappelen", "zout"],
+      "schimmelkaas" => ["schimmelkaas"],
+      "(schimmel)kaas" => ["schimmelkaas"],
+      "old amsterdam (maar een andere oude harde kaas kan natuurlijk ook)" => ["oude harde kaas"],
+      "g (verse) shiitake in bitesize stukjes gesneden" => ["shiitake"],
+      "pot hak bonenmix (kikkererwten, maïs, kidney en bruine bonen) afgespoeld en uitgelekt" => ["kikkererwten", "maïs", "bruine bonen"],
+      "g boter gesmolten en licht afgekoeld" => ["boter"]}
+
+    examples.each do |sentence, expected|
+      expect( a.find_in(sentence) ).to eq(expected)
+    end
 
 ## Development
 
