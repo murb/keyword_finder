@@ -1,7 +1,9 @@
 module KeywordFinder
   class Keywords < Array
     def to_regex
-      @to_regex ||= Regexp.new("(#{self.collect{|a| "\\s#{a}\\s"}.join("|")})")
+      @to_regex ||= Regexp.new("(#{
+        self.sort{|a,b| b.length <=> a.length }.collect{|a| "\\s#{a}\\s"}.join("|")
+      })")
     end
 
     def scan_in sentence
@@ -20,6 +22,7 @@ module KeywordFinder
       scan_results = self.scan_in(self.clean_sentence(sentence))
       scan_results.flatten!
       scan_results.uniq!
+      scan_results.compact!
       results = []
       scan_results.each do |result|
         results << result.strip unless result.strip.empty?

@@ -72,6 +72,10 @@ describe KeywordFinder::Keywords do
       a = KeywordFinder::Keywords.new(["ab","b"])
       expect(a.find_in("a (alternatief b)", {subsentences_strategy: :ignore_if_found_in_main})).to eq(["b"])
     end
+    it 'should try the longest first' do
+      a = KeywordFinder::Keywords.new(["wild", "wild konijn"])
+      expect(a.find_in("wild konijn")).to eq(["wild konijn"])
+    end
   end
   describe "#separate_main_and_sub_sentences" do
     it "should return empty string when empty string is given" do
