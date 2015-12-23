@@ -34,6 +34,10 @@ describe KeywordFinder::Keywords do
       a = KeywordFinder::Keywords.new(["ï","æ"])
       expect(a.to_regex).to eq(/(\sï\s|\sæ\s)/)
     end
+    it "should work with reserved regex characters" do
+      a = KeywordFinder::Keywords.new([" * "," ? ", " (hallo) ", " . ", " + "])
+      expect(a.to_regex).to eq(/(\s\ \(hallo\)\ \s|\s\ \*\ \s|\s\ \?\ \s|\s\ \.\ \s|\s\ \+\ \s)/)
+    end
   end
   describe "#find_in" do
     it 'is implemented and returns [] when empty' do
@@ -57,6 +61,10 @@ describe KeywordFinder::Keywords do
     it 'finds keywords in sentence with subsentences' do
       a = KeywordFinder::Keywords.new(["a","b"])
       expect(a.find_in("a (lees b)")).to eq(["a","b"])
+    end
+    it 'finds keywords with regex-escaped characters' do
+      a = KeywordFinder::Keywords.new(["vlees*","[kaas]"])
+      expect(a.find_in("vlees*, [kaas]")).to eq(["vlees*","[kaas]"])
     end
     it 'finds keywords in sentence with subsentences {options: strategy: none}' do
       a = KeywordFinder::Keywords.new(["a","b"])

@@ -1,8 +1,14 @@
 module KeywordFinder
   class Keywords < Array
+    def ordered_by_length
+      self.sort{|a,b| b.length <=> a.length }
+    end
+    def escape_regex_chars string
+      Regexp.escape(string)
+    end
     def to_regex
       @to_regex ||= Regexp.new("(#{
-        self.sort{|a,b| b.length <=> a.length }.collect{|a| "\\s#{a}\\s"}.join("|")
+        self.ordered_by_length.collect{|a| "\\s#{self.escape_regex_chars(a)}\\s"}.join("|")
       })")
     end
 
