@@ -4,7 +4,7 @@ module KeywordFinder
       self.sort{|a,b| b.length <=> a.length }
     end
     def escape_regex_chars string
-      Regexp.escape(string)
+      Regexp.escape(string).downcase
     end
     def to_regex
       @to_regex ||= Regexp.new("(#{
@@ -40,7 +40,7 @@ module KeywordFinder
       options = {
         subsentences_strategy: :none # :none, :ignore_if_found_in_main, :always_ignore
       }.merge(options)
-
+      sentence = sentence.downcase
       sentence = self.combine_more_specifics(sentence)
       main_and_subs = self.separate_main_and_sub_sentences(sentence)
       main_results = self.scan_part(main_and_subs[:main])

@@ -53,6 +53,11 @@ describe KeywordFinder::Keywords do
       expect(a.find_in("another ape b")).to eq(["b"])
       expect(a.find_in("another a pe b")).to eq(["a","b"])
     end
+    it 'finds keywords in sentence, while ignoring case' do
+      a = KeywordFinder::Keywords.new(["a","b"])
+      expect(a.find_in("another ape B")).to eq(["b"])
+      expect(a.find_in("another A pe b")).to eq(["a","b"])
+    end
     it 'finds keywords in more trashy sentence' do
       a = KeywordFinder::Keywords.new(["a","b"])
       expect(a.find_in("another ape. b?")).to eq(["b"])
