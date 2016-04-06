@@ -34,6 +34,10 @@ describe KeywordFinder::Keywords do
       a = KeywordFinder::Keywords.new(["ï","æ"])
       expect(a.to_regex).to eq(/(\sï\s|\sæ\s)/)
     end
+    it "should work with keywords with brackets" do
+      a = KeywordFinder::Keywords.new(["a","a (b)"])
+      expect(a.to_regex).to eq(/(\sa\ \(b\)\s|\sa\s)/)
+    end
     it "should work with reserved regex characters" do
       a = KeywordFinder::Keywords.new([" * "," ? ", " (hallo) ", " . ", " + "])
       expect(a.to_regex).to eq(/(\s\ \(hallo\)\ \s|\s\ \*\ \s|\s\ \?\ \s|\s\ \.\ \s|\s\ \+\ \s)/)
@@ -84,6 +88,14 @@ describe KeywordFinder::Keywords do
       a = KeywordFinder::Keywords.new(["wild", "wild konijn"])
       expect(a.find_in("wild konijn")).to eq(["wild konijn"])
     end
+    it 'should deal with brackets in start of sentence' do
+      a = KeywordFinder::Keywords.new(["wild", "konijn"])
+      expect(a.find_in("(wild) konijn en meer")).to eq(["konijn", "wild"])
+    end
+    it 'should deal with keywords with brackets' do
+      a = KeywordFinder::Keywords.new(["wild", "konijn", "(wild) konijn"])
+      expect(a.find_in("(wild) konijn en meer")).to eq(["(wild) konijn"])
+    end
   end
   describe "#separate_main_and_sub_sentences" do
     it "should return empty string when empty string is given" do
@@ -93,6 +105,17 @@ describe KeywordFinder::Keywords do
     it "should return sentence between brackets" do
       a = KeywordFinder::Keywords.new(["a","b"])
       expect(a.separate_main_and_sub_sentences("hallo (is dit wel een) zin")).to eq({main:"hallo  zin",subs:["is dit wel een"]})
+    end
+    it "should return this sentence between brackets" do
+      a = KeywordFinder::Keywords.new(["a","b"])
+      expect(a.separate_main_and_sub_sentences("(wild) konijn en meer")).to eq({main:"konijn en meer",subs:["wild"]})
+    end
+  end
+
+  describe "#scan_part" do
+    it 'should deal with keywords with brackets' do
+      a = KeywordFinder::Keywords.new(["wild", "konijn", "(wild) konijn"])
+      expect(a.scan_part("(wild) konijn en meer")).to eq(["(wild) konijn"])
     end
   end
 
