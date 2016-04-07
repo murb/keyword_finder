@@ -36,11 +36,11 @@ describe KeywordFinder::Keywords do
     end
     it "should work with keywords with brackets" do
       a = KeywordFinder::Keywords.new(["a","a (b)"])
-      expect(a.to_regex).to eq(/(\sa\ \(b\)\s|\sa\s)/)
+      expect(a.to_regex).to eq(/(\sa\ \ \(b\)\s|\sa\s)/)
     end
     it "should work with reserved regex characters" do
       a = KeywordFinder::Keywords.new([" * "," ? ", " (hallo) ", " . ", " + "])
-      expect(a.to_regex).to eq(/(\s\ \(hallo\)\ \s|\s\ \*\ \s|\s\ \?\ \s|\s\ \.\ \s|\s\ \+\ \s)/)
+      expect(a.to_regex).to eq(/(\s\ \ \(hallo\)\ \ \s|\s\ \ \*\ \ \s|\s\ \ \?\ \ \s|\s\ \ \.\ \ \s|\s\ \ \+\ \ \s)/)
     end
   end
   describe "#find_in" do
@@ -128,7 +128,7 @@ describe KeywordFinder::Keywords do
     it "should work for these examples" do
       a = KeywordFinder::Keywords.new(["aardappelen", "zachtkokende aardappelen", "zout",
         "schimmelkaas", "kaas", "oude harde kaas", "kikkererwten", "maïs",
-        "bruine bonen", "shiitake", "boter", "kidney bonen"])
+        "bruine bonen", "shiitake", "boter", "kidney bonen", "spinazie", "knoflook", "peterselie", "peper"])
 
       examples = {"een grote pan zachtkokende aardappelen met een snufje zout"=>["zachtkokende aardappelen", "zout"],
         "schimmelkaas" => ["schimmelkaas"],
@@ -136,7 +136,12 @@ describe KeywordFinder::Keywords do
         "old amsterdam (maar een andere oude harde kaas kan natuurlijk ook)" => ["oude harde kaas"],
         "g (verse) shiitake in bitesize stukjes gesneden" => ["shiitake"],
         "pot hak bonenmix (kikkererwten, maïs, kidney en bruine bonen) afgespoeld en uitgelekt" => ["kikkererwten", "maïs", "bruine bonen"],
-        "g boter gesmolten en licht afgekoeld" => ["boter"]}
+        "g boter gesmolten en licht afgekoeld" => ["boter"],
+        "peterselie knoflook spinazie zout peper kaas" => ["peterselie", "knoflook", "spinazie", "zout", "peper", "kaas"],
+        "peterselie knoflook
+spinazie zout
+peper shiitake" => ["peterselie", "knoflook", "spinazie", "zout", "peper", "shiitake"]
+      }
 
       examples.each do |sentence, expected|
         expect( a.find_in(sentence) ).to eq(expected)

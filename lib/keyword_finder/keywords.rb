@@ -8,7 +8,7 @@ module KeywordFinder
     end
     def to_regex
       @to_regex ||= Regexp.new("(#{
-        self.ordered_by_length.collect{|a| "\\s#{self.escape_regex_chars(a)}\\s"}.join("|")
+        self.ordered_by_length.collect{|a| "\\s#{self.escape_regex_chars(a.gsub(' ', '  '))}\\s"}.join("|")
       })")
     end
 
@@ -17,7 +17,7 @@ module KeywordFinder
     end
 
     def clean_sentence sentence
-      sentence.gsub(/(\.|\?|\,|\;)/," $1 ")
+      sentence.gsub(/(\.|\?|\,|\;)/," $1 ").gsub(/\n|\s/, '  ')
     end
 
     def combine_more_specifics sentence
@@ -35,7 +35,7 @@ module KeywordFinder
       scan_results.each do |result|
         results << result.strip unless result.strip.empty?
       end
-      results
+      results.collect{|a| a.gsub('  ', ' ')}
     end
 
     # find in a sentence
@@ -49,7 +49,7 @@ module KeywordFinder
         subsentences_strategy: :none # :none, :ignore_if_found_in_main, :always_ignore
       }.merge(options)
 
-      sentence = sentence.downcase
+      sentence = sentence.downcase.gsub(/\n/," ")
 
       full_sentence_results = self.scan_part(sentence)
 
