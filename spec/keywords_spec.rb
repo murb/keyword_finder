@@ -140,7 +140,8 @@ describe KeywordFinder::Keywords do
         "peterselie knoflook spinazie zout peper kaas" => ["peterselie", "knoflook", "spinazie", "zout", "peper", "kaas"],
         "peterselie knoflook
 spinazie zout
-peper shiitake" => ["peterselie", "knoflook", "spinazie", "zout", "peper", "shiitake"]
+peper shiitake" => ["peterselie", "knoflook", "spinazie", "zout", "peper", "shiitake"],
+        "\n\t\t\t\n\t\t\t\t100 g Parmezaanse kaas (stukje)\t\t" => ["kaas"]
       }
 
       examples.each do |sentence, expected|

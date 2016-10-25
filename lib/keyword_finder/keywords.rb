@@ -17,7 +17,7 @@ module KeywordFinder
     end
 
     def clean_sentence sentence
-      sentence.gsub(/(\.|\?|\,|\;)/," $1 ").gsub(/\n|\s/, '  ')
+      sentence.gsub(/(\.|\?|\,|\;)/," $1 ").gsub(/\n|\s/, '  ').gsub(/[[:space:]]/,' ')
     end
 
     def combine_more_specifics sentence
