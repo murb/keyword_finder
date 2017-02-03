@@ -42,6 +42,10 @@ describe KeywordFinder::Keywords do
       a = KeywordFinder::Keywords.new([" * "," ? ", " (hallo) ", " . ", " + "])
       expect(a.to_regex).to eq(/(\s\ \ \(hallo\)\ \ \s|\s\ \ \*\ \ \s|\s\ \ \?\ \ \s|\s\ \ \.\ \ \s|\s\ \ \+\ \ \s)/)
     end
+    it "should work with reserved regex characters AND allow for the entire_words_only option to eq false" do
+      a = KeywordFinder::Keywords.new([" * "," ? ", " (hallo) ", " . ", " + "])
+      expect(a.to_regex({entire_words_only: false})).to eq(/(\ \ \(hallo\)\ \ |\ \ \*\ \ |\ \ \?\ \ |\ \ \.\ \ |\ \ \+\ \ )/)
+    end
   end
   describe "#find_in" do
     it 'is implemented and returns [] when empty' do
@@ -96,6 +100,14 @@ describe KeywordFinder::Keywords do
     it 'should deal with brackets in start of sentence' do
       a = KeywordFinder::Keywords.new(["wild", "konijn"])
       expect(a.find_in("(wild) konijn en meer")).to eq(["konijn", "wild"])
+    end
+    it 'should respect the entire_words_only false setting if given' do
+      a = KeywordFinder::Keywords.new(["wild", "konijn"])
+      expect(a.find_in("wildkonijn", {entire_words_only: false})).to eq(["wild", "konijn"])
+    end
+    it 'should prefer the longest even if the entire_words_only false setting if given' do
+      a = KeywordFinder::Keywords.new(["wild", "konijn", "wildkonijn"])
+      expect(a.find_in("wildkonijn", {entire_words_only: false})).to eq(["wildkonijn"])
     end
     it 'should deal with keywords with brackets' do
       a = KeywordFinder::Keywords.new(["wild", "konijn", "(wild) konijn"])

@@ -6,14 +6,18 @@ module KeywordFinder
     def escape_regex_chars string
       Regexp.escape(string).downcase
     end
-    def to_regex
-      @to_regex ||= Regexp.new("(#{
-        self.ordered_by_length.collect{|a| "\\s#{self.escape_regex_chars(a.gsub(' ', '  '))}\\s"}.join("|")
+
+    def to_regex(options={})
+      options = {entire_words_only: true}.merge(options)
+      spacer = options[:entire_words_only] ? "\\s" : ""
+      @to_regex = {} unless defined?(@to_regex)
+      @to_regex[options[:entire_words_only]] ||= Regexp.new("(#{
+        self.ordered_by_length.collect{|a| "#{spacer}#{self.escape_regex_chars(a.gsub(' ', '  '))}#{spacer}"}.join("|")
       })")
     end
 
-    def scan_in sentence
-      " #{sentence} ".scan(self.to_regex)
+    def scan_in sentence, options={}
+      " #{sentence} ".scan(self.to_regex(options))
     end
 
     def clean_sentence sentence
@@ -26,8 +30,8 @@ module KeywordFinder
         gsub(/([A-Za-z]+\([A-Za-z]*\)[A-Za-z]*)/) { |s| s.gsub(/(\(|\))/,'') }
     end
 
-    def scan_part sentence
-      scan_results = self.scan_in(self.clean_sentence(sentence))
+    def scan_part sentence, options={}
+      scan_results = self.scan_in(self.clean_sentence(sentence), options)
       scan_results.flatten!
       scan_results.uniq!
       scan_results.compact!
@@ -42,27 +46,28 @@ module KeywordFinder
     #
     #
     # @param [String] sentence that might contain the keywords this instance was initalized with
-    # @param [Hash] options; notably the +:subsentences_strategy+, which can be one of +:none+, +:ignore_if_found_in_main+, +:always_ignore+
+    # @param [Hash] options; notably the +:subsentences_strategy+, which can be one of +:none+, +:ignore_if_found_in_main+, +:always_ignore+ and the +:entire_words_only+ boolean, which can be either +true+ or +false+
 
     def find_in sentence, options={}
       options = {
-        subsentences_strategy: :none # :none, :ignore_if_found_in_main, :always_ignore
+        subsentences_strategy: :none, # :none, :ignore_if_found_in_main, :always_ignore
+        entire_words_only: true
       }.merge(options)
 
       sentence = sentence.downcase.gsub(/\n/," ")
 
-      full_sentence_results = self.scan_part(sentence)
+      full_sentence_results = self.scan_part(sentence, options)
 
       sentence = self.combine_more_specifics(sentence)
       main_and_subs = self.separate_main_and_sub_sentences(sentence)
-      main_results = self.scan_part(main_and_subs[:main])
+      main_results = self.scan_part(main_and_subs[:main], options)
 
       sub_results = []
       unless (
         options[:subsentences_strategy] == :always_ignore or
         (main_results.count > 0 and options[:subsentences_strategy] == :ignore_if_found_in_main)
         )
-        sub_results = main_and_subs[:subs].collect{|subsentence| self.scan_part(subsentence)}.flatten
+        sub_results = main_and_subs[:subs].collect{|subsentence| self.scan_part(subsentence, options)}.flatten
       end
 
       clean_sentence_results = main_results + sub_results
