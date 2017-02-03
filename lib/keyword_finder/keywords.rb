@@ -12,7 +12,11 @@ module KeywordFinder
       spacer = options[:entire_words_only] ? "\\s" : ""
       @to_regex = {} unless defined?(@to_regex)
       @to_regex[options[:entire_words_only]] ||= Regexp.new("(#{
-        self.ordered_by_length.collect{|a| "#{spacer}#{self.escape_regex_chars(a.gsub(' ', '  '))}#{spacer}"}.join("|")
+        self.ordered_by_length.collect do |a|
+          a_spacer = spacer
+          a_spacer = "" if (options[:entire_words_only] == :when_short and a.length > 3)
+          "#{a_spacer}#{self.escape_regex_chars(a.gsub(' ', '  '))}#{a_spacer}"
+        end.join("|")
       })")
     end
 
@@ -46,7 +50,7 @@ module KeywordFinder
     #
     #
     # @param [String] sentence that might contain the keywords this instance was initalized with
-    # @param [Hash] options; notably the +:subsentences_strategy+, which can be one of +:none+, +:ignore_if_found_in_main+, +:always_ignore+ and the +:entire_words_only+ boolean, which can be either +true+ or +false+
+    # @param [Hash] options; notably the +:subsentences_strategy+, which can be one of +:none+, +:ignore_if_found_in_main+, +:always_ignore+ and the +:entire_words_only+ boolean, which can be either +true+, +false+, or :when_short
 
     def find_in sentence, options={}
       options = {

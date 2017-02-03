@@ -117,6 +117,10 @@ describe KeywordFinder::Keywords do
       a = KeywordFinder::Keywords.new(["wild", "konijn", "wildkonijn", "gekonfijte sinaasappel"])
       expect(a.find_in("wildkonijn met gekonfijte sinaasappels", {entire_words_only: false})).to eq(["wildkonijn", "gekonfijte sinaasappel"])
     end
+    it 'should work even accross words when the entire_words_only false setting if given' do
+      a = KeywordFinder::Keywords.new(["wild", "konijn", "wildkonijn", "gekonfijte sinaasappel", "ui"])
+      expect(a.find_in("wildkonijn met gekonfijte sinaasappels fruit", {entire_words_only: :when_short})).to eq(["wildkonijn", "gekonfijte sinaasappel"])
+    end
   end
   describe "#separate_main_and_sub_sentences" do
     it "should return empty string when empty string is given" do
