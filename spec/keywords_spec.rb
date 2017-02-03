@@ -101,6 +101,10 @@ describe KeywordFinder::Keywords do
       a = KeywordFinder::Keywords.new(["wild", "konijn"])
       expect(a.find_in("(wild) konijn en meer")).to eq(["konijn", "wild"])
     end
+    it 'should deal with keywords with brackets' do
+      a = KeywordFinder::Keywords.new(["wild", "konijn", "(wild) konijn"])
+      expect(a.find_in("(wild) konijn en meer")).to eq(["(wild) konijn"])
+    end
     it 'should respect the entire_words_only false setting if given' do
       a = KeywordFinder::Keywords.new(["wild", "konijn"])
       expect(a.find_in("wildkonijn", {entire_words_only: false})).to eq(["wild", "konijn"])
@@ -109,9 +113,9 @@ describe KeywordFinder::Keywords do
       a = KeywordFinder::Keywords.new(["wild", "konijn", "wildkonijn"])
       expect(a.find_in("wildkonijn", {entire_words_only: false})).to eq(["wildkonijn"])
     end
-    it 'should deal with keywords with brackets' do
-      a = KeywordFinder::Keywords.new(["wild", "konijn", "(wild) konijn"])
-      expect(a.find_in("(wild) konijn en meer")).to eq(["(wild) konijn"])
+    it 'should work even accross words when the entire_words_only false setting if given' do
+      a = KeywordFinder::Keywords.new(["wild", "konijn", "wildkonijn", "gekonfijte sinaasappel"])
+      expect(a.find_in("wildkonijn met gekonfijte sinaasappels", {entire_words_only: false})).to eq(["wildkonijn", "gekonfijte sinaasappel"])
     end
   end
   describe "#separate_main_and_sub_sentences" do
