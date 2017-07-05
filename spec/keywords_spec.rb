@@ -121,6 +121,14 @@ describe KeywordFinder::Keywords do
       a = KeywordFinder::Keywords.new(["wild", "konijn", "wildkonijn", "gekonfijte sinaasappel", "ui"])
       expect(a.find_in("wildkonijn met gekonfijte sinaasappels fruit", {entire_words_only: :when_short})).to eq(["wildkonijn", "gekonfijte sinaasappel"])
     end
+    it 'should work with non-ascii characters' do
+      a = KeywordFinder::Keywords.new(["orchideeën", "planten", "orchidaceae"])
+      expect(a.find_in("De familie van de orchideeën (Orchidaceae) is een van de grootste plantenfamilies op aarde", {entire_words_only: :when_short})).to eq(["orchideeën", "planten", "orchidaceae"])
+    end
+    pending 'should work with non-ascii characters' do
+      a = KeywordFinder::Keywords.new(["orchideeën", "planten", "orchidaceae"])
+      expect(a.find_in("De familie van de orchideeen (Orchidaceae) is een van de grootste plantenfamilies op aarde", {entire_words_only: :when_short})).to eq(["orchideeën", "planten", "orchidaceae"])
+    end
   end
   describe "#separate_main_and_sub_sentences" do
     it "should return empty string when empty string is given" do
