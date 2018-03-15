@@ -1,6 +1,6 @@
 # KeywordFinder
 
-[![Build Status](https://travis-ci.org/murb/keyword_finder.svg)](https://travis-ci.org/murb/keyword_finder)
+[![Code Climate](https://codeclimate.com/github/murb/keyword_finder.png)](https://codeclimate.com/github/murb/keyword_finder) [![Build Status](https://travis-ci.org/murb/keyword_finder.svg?branch=master)](https://travis-ci.org/murb/keyword_finder) [![Gem Version](https://badge.fury.io/rb/keyword_finder.svg)](http://badge.fury.io/rb/keyword_finder)
 
 We were dealing with the following situation:
 
